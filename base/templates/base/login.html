@@ -1,0 +1,36 @@
+{%extends 'base/common/main.html'%} {%block content%}
+<div class="docs-wrapper pt-5">
+    <div class="container card shadow-sm col-lg-4 col-md-5 pt-5 rounded-5">
+        <div class="card-body mb-3">
+            <h3 class="card-title ">
+
+                <!--//card-icon-holder-->
+                <center>Welcome back</center>
+            </h3>
+            <form class="search-form" method="POST">
+                {%csrf_token%}
+                <div class="form-group"><input type="text" placeholder="Username" value="{{username}}" name="username" class="form-control search-input"></div>
+                {%if messages%} {%for msg in messages%}{%if 'not exist' in msg.message%}
+                <span class="text-danger" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span>{%endif%} {%endfor%} {%endif%}
+                <br>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" name="password" class="form-control search-input">
+                </div>
+                {%if messages%} {%for msg in messages%}{%if 'password' in msg.message%}
+                <span class="text-danger" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span>{%endif%} {%endfor%} {%endif%}
+                <br>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary rounded-pill form-control my-4 mb-2" value="Login">Sign In</button>
+                    <center>Don't have an account? <a href="#">Sign up</a></center>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+
+    <!--//docs-intro-->
+
+</div>
+{%endblock content%}

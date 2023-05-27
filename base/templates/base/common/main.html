@@ -1,0 +1,53 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>The voice recognizer you need</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Bootstrap 4 Template For Software Startups">
+    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">
+    <link rel="shortcut icon" href="{%static 'favicon.ico'%}">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome JS-->
+    <script defer src="{%static 'assets/fontawesome/js/all.min.js'%}"></script>
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.2/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="{%static 'assets/plugins/simplelightbox/simple-lightbox.min.css'%}">
+
+    <!-- Theme CSS -->
+    <link id="theme-style" rel="stylesheet" href="{%static 'assets/css/theme.css'%}">
+
+</head>
+
+<body class="docs-page">
+    {%include 'base/common/navbar.html'%}
+    <div class="docs-wrapper">
+        {%block content%} {%endblock content%}
+    </div>
+    {%include 'base/common/footer.html'%}
+
+
+    <!-- Javascript -->
+    <script src="{%static 'assets/plugins/popper.min.js'%}"></script>
+    <script src="{%static 'assets/plugins/bootstrap/js/bootstrap.min.js'%}"></script>
+
+    <!-- Page Specific JS -->
+    <script src="{%static 'assets/plugins/smoothscroll.min.js'%}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.8/highlight.min.js"></script>
+    <script src="{%static 'assets/js/highlight-custom.js'%}"></script>
+    <script src="{%static 'assets/plugins/simplelightbox/simple-lightbox.min.js'%}"></script>
+    <script src="{%static 'assets/plugins/gumshoe/gumshoe.polyfills.min.js'%}"></script>
+    <script src="{%static 'assets/js/docs.js'%}"></script>
+</body>
+
+</html>
