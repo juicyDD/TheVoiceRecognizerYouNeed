@@ -1,4 +1,11 @@
-{%extends 'main.html'%} 
-{%block content%}
-<h1>doc</h1>
+{%extends 'base/common/main.html'%} {%block content%}
+<div class="container">
+    <article class="docs-article">
+
+        {{post.body|safe}}
+        <hr>
+    </article>
+    <!--//docs-article-->
+
+</div>
 {%endblock content%}

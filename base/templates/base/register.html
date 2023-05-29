@@ -1,0 +1,31 @@
+{%extends 'base/common/main.html'%} {%block content%}
+<div class="docs-wrapper pt-5">
+    <div class="container card shadow-sm col-lg-4 col-md-5 pt-5 rounded-5">
+        <div class="card-body mb-3">
+            <h3 class="card-title ">
+
+                <!--//card-icon-holder-->
+                <center>Register</center>
+            </h3>
+            <form class="search-form" method="POST">
+                {%csrf_token%} {%if messages%} {%for msg in messages%}{%if 'not exist' in msg.message%}
+                <span class="text-danger" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%elif 'successfully' in msg.message%}
+                <span class="text-success" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%endif%} {%endfor%} {%endif%} {% for field in form %}
+                <div class="form-group"><br> {{field}}</div>
+                {%endfor%}
+                <br>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary rounded-pill form-control my-4 mb-2" value="Register">Register</button> </div>
+                <center>Already signed up?<a href="{%url 'login'%}">Sign in</a></center>
+
+
+
+            </form>
+        </div>
+    </div>
+
+
+    <!--//docs-intro-->
+
+</div>
+{%endblock content%}
