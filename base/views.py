@@ -73,4 +73,4 @@ def document(request,slug):
 
 @login_required(login_url='login')
 def apiPage(request):
-    return HttpResponse("api")
+    return HttpResponse("api list")

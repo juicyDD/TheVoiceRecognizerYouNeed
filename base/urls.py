@@ -8,5 +8,6 @@ urlpatterns = [
     path('register', views.registerUser, name='register'),
     path('documentation/<str:slug>/',views.document,name='document'),
     path('documentation',views.tableofcontent,name='table-content'),
-    path('api',views.apiPage,name='api'),
+    path('api-list',views.apiPage,name='api'),
+    path('api/',include('base.api.urls'))
 ]

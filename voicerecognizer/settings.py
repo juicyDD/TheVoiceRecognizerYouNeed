@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "base.apps.BaseConfig",
     "ckeditor",
     "ckeditor_uploader",
+    
+    "rest_framework",
 ]
 
 CKEDITOR_JQUERY_URL= "https://code.jquery.com/jquery-2.2.4.min.js"
