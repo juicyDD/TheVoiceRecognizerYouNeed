@@ -66,11 +66,12 @@ def tableofcontent(request):
 def document(request,slug):
     post = Post.objects.filter(slug=slug)[0]
     related_posts = Post.objects.filter(topic=post.topic)
-    context = {'post':post}
+    context = {'post':post,'related_posts':related_posts}
     return render(request,'base/document.html',context)
 
 
 
 @login_required(login_url='login')
 def apiPage(request):
-    return HttpResponse("api list")
+    context = {}
+    return render(request,'base/api_list.html',context)
