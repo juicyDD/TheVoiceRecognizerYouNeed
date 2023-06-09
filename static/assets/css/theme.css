@@ -11204,9 +11204,10 @@ a.text-link:hover {
   color: #b73c37;
 }
 .cta-section .container {
-  position: relative;
+  position: absolute;
   z-index: 10;
 }
+
 @media print {
   #docs-sidebar {
       display: none !important;

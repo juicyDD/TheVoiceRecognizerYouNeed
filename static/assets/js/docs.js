@@ -7,7 +7,6 @@ const sidebar = document.getElementById('docs-sidebar');
 const sidebarLinks = document.querySelectorAll('#docs-sidebar .scrollto');
 
 
-
 /* ===== Responsive Sidebar ====== */
 
 window.onload=function() 
@@ -49,6 +48,7 @@ sidebarToggler.addEventListener('click', () => {
 		sidebar.classList.add('sidebar-visible');
 	}
 });
+
 
 
 /* ===== Smooth scrolling ====== */
