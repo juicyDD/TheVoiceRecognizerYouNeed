@@ -7,11 +7,14 @@
     <div class="branding docs-branding">
         <div class="container-fluid position-relative py-2">
             <div class="docs-logo-wrapper">
+                {%if related_posts%}
                 <button id="docs-sidebar-toggler" class="docs-sidebar-toggler docs-sidebar-visible me-2 d-xl-none" type="button">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
+                {%endif%}
+ 
                 <div class="site-logo">
                     <a class="navbar-brand" href={%url 'home'%}><img class="logo-icon me-2" src="{%static 'assets/images/coderdocs-logo.svg'%}" alt="logo"><span class="logo-text">VoiceRecognizer<span class="text-alt">Docs</span></span>
                     </a>
@@ -36,7 +39,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             {%if request.user.is_authenticated%}
-                            <a class="dropdown-item" href="#"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <small>Personal Information</small></a>
+                            <a class="dropdown-item" href="{%url 'edit-user'%}"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <small>Personal Information</small></a>
                             <a class="dropdown-item" href="#">Another action</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{%url 'logout'%}"><i class="fa fa-sign-out fa-fw" aria-hidden="true"></i> Sign out</a>
