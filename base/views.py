@@ -127,3 +127,7 @@ def editUser(request):
 def apiPage(request):
     context = {}
     return render(request,'base/api_list.html',context)
+
+def apiTokenList(request):
+    context = {}
+    return render(request,'base/api_token_list.html', context)

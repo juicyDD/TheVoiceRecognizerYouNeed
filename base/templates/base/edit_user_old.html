@@ -1,0 +1,53 @@
+{%extends 'base/common/main.html'%} {%block content%}
+<div class="container">
+    <article class="docs-article">
+        <h2>Update personal information</h2>
+        <hr>
+        <br>
+        <form class="search-form" style="padding: 0px 100px" method="POST">
+            {%csrf_token%}
+            <div class="form-group">
+                <label for="LastName" style="padding-left: 20px"> Last Name</label>
+                <input type="text" value="{{last_name}}" name="lastName" class="form-control search-input">
+            </div>
+            <br>
+
+            <div class="form-group">
+                <label for="FirstName" style="padding-left: 20px"> First Name</label>
+                <input type="text" value="{{first_name}}" name="firstName" class="form-control search-input">
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="Username" style="padding-left: 20px"> Username</label>
+                <input required type="text" value="{{username}}" name="username" class="form-control search-input">
+            </div>
+            <br>
+            <div class="form-group" >
+                <label for="Username" style="padding-left: 20px"> Email</label>
+                <input disabled type="text" value="{{email}}" name="username" class="form-control search-input">
+            </div>
+            {%if messages%} {%for msg in messages%}{%if 'username' in msg.message%}
+            <span class="text-danger" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%elif 'successfully' in msg.message%}
+            <span class="text-success" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%endif%} {%endfor%} {%endif%}
+            <br>
+            
+            
+            
+            <center>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-outline-success rounded-pill  my-4 mb-2" value="Login">Update information</button>
+                    
+                </div>
+            </center>
+    
+    
+        </form>
+        <hr>
+    </article>
+  
+    
+          
+    <!--//docs-article-->
+
+</div>
+{%endblock content%}

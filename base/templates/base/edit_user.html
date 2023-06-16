@@ -1,50 +1,73 @@
 {%extends 'base/common/main.html'%} {%block content%}
-<div class="container">
-    <article class="docs-article">
-        <h2>Update personal information</h2>
-        <hr>
-        <br>
-        <form class="search-form" style="padding: 0px 100px" method="POST">
-            {%csrf_token%}
-            <div class="form-group">
-                <label for="LastName" style="padding-left: 20px"> Last Name</label>
-                <input type="text" value="{{last_name}}" name="lastName" class="form-control search-input">
-            </div>
+<div class="docs-wrapper">
+    <div id="docs-sidebar" class="docs-sidebar">
+        <div class="top-search-box d-lg-none p-3">
+            <form class="search-form">
+                <input type="text" placeholder="Search the docs..." name="search" class="form-control search-input">
+                <button type="submit" class="btn search-btn" value="Search"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+        <nav id="docs-nav" class="docs-nav navbar">
+            <ul class="section-items list-unstyled nav flex-column pb-3">
+                <li class="nav-item section-title"><a class="nav-link scrollto active" href="#section-1">
+                    <span class="theme-icon-holder me-2"><i class="fas fa-map-signs"></i></span><span>{{post.topic}}</span></a>
+                </li>
+                
+                <li class="nav-item active"><a class="nav-link " href="{%url 'edit-user'%}">Edit User</a></li>
+                <li class="nav-item"><a class="nav-link " href="{%url 'api-tokens'%}">API Token</a></li>
+                
+                
+            </ul>
+    
+        </nav><!--//docs-nav-->
+    </div><!--//docs-sidebar-->
+    <div class="container">
+        <article class="docs-article">
+            <h2>Update personal information</h2>
+            <hr>
             <br>
-
-            <div class="form-group">
-                <label for="FirstName" style="padding-left: 20px"> First Name</label>
-                <input type="text" value="{{first_name}}" name="firstName" class="form-control search-input">
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="Username" style="padding-left: 20px"> Username</label>
-                <input required type="text" value="{{username}}" name="username" class="form-control search-input">
-            </div>
-            <br>
-            <div class="form-group" >
-                <label for="Username" style="padding-left: 20px"> Email</label>
-                <input disabled type="text" value="{{email}}" name="username" class="form-control search-input">
-            </div>
-            {%if messages%} {%for msg in messages%}{%if 'username' in msg.message%}
-            <span class="text-danger" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%elif 'successfully' in msg.message%}
-            <span class="text-success" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%endif%} {%endfor%} {%endif%}
-            <br>
-            
-            
-            
-            <center>
+            <form class="search-form" style="padding: 0px 100px" method="POST">
+                {%csrf_token%}
                 <div class="form-group">
-                    <button type="submit" class="btn btn-outline-success rounded-pill  my-4 mb-2" value="Login">Update information</button>
-                    
+                    <label for="LastName" style="padding-left: 20px"> Last Name</label>
+                    <input type="text" value="{{last_name}}" name="lastName" class="form-control search-input">
                 </div>
-            </center>
+                <br>
     
-    
-        </form>
-        <hr>
-    </article>
-  
+                <div class="form-group">
+                    <label for="FirstName" style="padding-left: 20px"> First Name</label>
+                    <input type="text" value="{{first_name}}" name="firstName" class="form-control search-input">
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="Username" style="padding-left: 20px"> Username</label>
+                    <input required type="text" value="{{username}}" name="username" class="form-control search-input">
+                </div>
+                <br>
+                <div class="form-group" >
+                    <label for="Username" style="padding-left: 20px"> Email</label>
+                    <input disabled type="text" value="{{email}}" name="username" class="form-control search-input">
+                </div>
+                {%if messages%} {%for msg in messages%}{%if 'username' in msg.message%}
+                <span class="text-danger" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%elif 'successfully' in msg.message%}
+                <span class="text-success" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%endif%} {%endfor%} {%endif%}
+                <br>
+                
+                
+                
+                <center>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-success rounded-pill  my-4 mb-2" value="Login">Update information</button>
+                        
+                    </div>
+                </center>
+        
+        
+            </form>
+            <hr>
+        </article>
+    </div>
+  </div>
     
           
     <!--//docs-article-->
