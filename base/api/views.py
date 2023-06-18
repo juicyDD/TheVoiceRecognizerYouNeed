@@ -12,6 +12,8 @@ from django.contrib.auth import login
 import random, os
 import pandas as pd
 from base.api.voice_recognizer import my_neural_network, features_extraction, nhi_config, inference
+from base.models import UserToken
+from knox.models import AuthToken
 
 from .serializers import CreateUserSerializer, UpdateUserSerializer, LoginSerializer
 from knox import views as knox_views
@@ -54,8 +56,24 @@ class LoginAPIView(knox_views.LoginView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data['user']
             login(request, user)
-            response = super().post(request, format=None)
+            # response = super().post(request, format=None)
+            instance, token=AuthToken.objects.create(request.user)
+            
+            abb = token[:4] +"..." + token[-3:]
+            expiry = self.format_expiry_datetime(instance.expiry)
+            
+            
+            UserToken.objects.create(
+                token_key = instance.token_key,
+                email = user.email,
+                abbreviation = abb,
+                expiry = expiry
+            )
+            data = {
+            'expiry': self.format_expiry_datetime(instance.expiry),
+            'token': token
+            }
         else:
             return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(response.data, status=status.HTTP_200_OK)
+        return Response(data,status=status.HTTP_200_OK) #response.data
