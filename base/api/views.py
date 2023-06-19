@@ -13,7 +13,7 @@ import random, os
 import pandas as pd
 from base.api.voice_recognizer import my_neural_network, features_extraction, nhi_config, inference
 from base.models import UserToken
-from knox.models import AuthToken
+from knox.models import AuthToken 
 
 from .serializers import CreateUserSerializer, UpdateUserSerializer, LoginSerializer
 from knox import views as knox_views
@@ -59,9 +59,8 @@ class LoginAPIView(knox_views.LoginView):
             # response = super().post(request, format=None)
             instance, token=AuthToken.objects.create(request.user)
             
-            abb = token[:4] +"..." + token[-3:]
+            abb = token[:4] +"..." + token[-4:]
             expiry = self.format_expiry_datetime(instance.expiry)
-            
             
             UserToken.objects.create(
                 token_key = instance.token_key,
