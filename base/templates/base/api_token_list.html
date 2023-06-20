@@ -31,18 +31,49 @@
                     <td><b>NAME</b></td>
                     <td><b>KEY</b></td>
                     <td><b>EXP</b></td>
+                    <td></td>
                 </thead>
                 <tbody id="tableBody">
                 {% load tz %}{% timezone 'Asia/Bangkok' %}
                 {%for token in tokens %}
-                <tr id="{{token.token_key}}">
+                <tr id="row{{token.token_key}}">
                     <td>{{token.name}}</td>
                     <td>{{token.abbreviation}}</td>
                     <td>{{token.expiry}}</td>
+                    <td><a href="#" onclick="deleteAPIKey( '{{token.token_key}}' )" id="{{token.token_key}}"  style="color:black"><i class="fa fa-trash"></i></a></td>
                 </tr>
                 {%endfor%}{% endtimezone %}
                 </tbody>
             </table>
+              <!-- verify delete -->
+                        <!-- Modal -->
+              <div class="modal fade" id="verifyDelete" tabindex="-1" role="dialog" aria-labelledby="verifyDeleteLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="verifyDeleteLabel">Revoke secret key</h5>
+                      <button type="button" class="btn  btn-outline-dark rounded-pill close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" style="text-align:justify;">
+                      This API key will immediately be disabled. API requests made using this key will be rejected, which could cause any systems still depending on it to break. Once revoked, you'll no longer be able to view or modify this API key.
+                      
+                      <div class="form-group ">
+                        <input hidden=true type="text" name="deletingItem" id="deletingItem" class="form-control search-input " value=""/>
+                      </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                      <button type="button" data-target="#verifyDelete" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Confirm delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+             <!-- end  verify delete -->
+
+
             <button class="btn btn-outline-success rounded-pill  my-4 mb-2" data-toggle="modal" data-target="#newAPIKey"><i class="fa fa-plus"></i> Create new secret key</button>
             <div class="modal fade" id="newAPIKey" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -98,7 +129,13 @@
                     </div>
                   </div>
             </div>
+            
+
+          
+            
+            
         </article>
+        
     </div>
   </div>
 </div>
@@ -108,6 +145,52 @@
 <script src="https://code.jquery.com/jquery-3.5.1.js" 
 integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" 
     crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+  $(document).on('submit','#APIForm',function(e){
+    e.preventDefault();
+      $.ajax({
+      type:'POST',
+      url:'{% url "api-tokens" %}',
+      data:
+      {
+          name:$("#APIName").val(),
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+      },
+      success:function(res, status){
+          $("#inforNewKey").modal('show');
+          $("#returnedToken").val(res['token'])
+          tableCurrentHtml = document.getElementById("tableBody").innerHTML;
+          var options = {
+              dateStyle:'long',
+              timeStyle:'short'
+              }
+          document.getElementById("tableBody").innerHTML = tableCurrentHtml+"<tr id='row"+res['token_key']+"'><td>"+res['token_name']+"<td>"+res['abbreviation']+"</td>"+"<td>"+
+                new Date(res['expiry']).toLocaleString("en-CA", options).replace(" at",",")+"</td><td>"+
+                  "<a href=# id="+res['token_key']+" style='color:black'><i class='fa fa-trash'></i></a>"+"</td>"+"</tr>"
+          document.getElementById('row'+res['token_key']).addEventListener("click", handleDeleteAPIKey);
+          }
+      }) 
+    }); 
+
+    $('#verifyDelete .btn-danger').click(function(){
+      var tokenkey = $("#verifyDelete #deletingItem").val().replace('row','')
+      console.log('tokennnn' , tokenkey)
+      $.ajax({
+        type:'POST',
+        url: '{% url "delete-token"%}',
+        data: {token_key: tokenkey,
+        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()},
+        success:function(res, status){
+            console.log(res['deleteMessage'])
+        }
+      })
+    
+      document.getElementById('row'+tokenkey).remove();
+  });
+  
+  </script>
 <script>
     function copyToClipboard() {
         // Get the text field
@@ -118,37 +201,32 @@ integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
         navigator.clipboard.writeText(copyText);
        console.log(copyText);
         // Alert the copied text
-      }
+    }
+
+    function deleteAPIKey( apiKey){
+      console.log('deleting'+apiKey);
+      $("#verifyDelete #deletingItem").val(apiKey)
+      $("#verifyDelete").modal('show')
+      
+      /*$.ajax({
+        type:'POST',
+        url: '{% url "delete-token"%}',
+        data: {token_key: apiKey,
+        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()},
+        success:function(res, status){
+            console.log(res['deleteMessage'])
+        }
+      })*/
+    
+    }
+    function handleDeleteAPIKey(event)
+    {
+      deleteAPIKey(this.id);
+      
+    }
 </script>
 
-<script type="text/javascript">
-$(document).on('submit','#APIForm',function(e){
-  e.preventDefault();
-   $.ajax({
-    type:'POST',
-    url:'{% url "api-tokens" %}',
-    data:
-    {
-        name:$("#APIName").val(),
-        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-    },
-    success:function(res, status){
-        $("#inforNewKey").modal('show');
-        $("#returnedToken").val(res['token'])
-        tableCurrentHtml = document.getElementById("tableBody").innerHTML;
-        var options = {
-            dateStyle:'long',
-            timeStyle:'short'
-            }
-        document.getElementById("tableBody").innerHTML = tableCurrentHtml+"<tr><td>"+res['token_name']+"<td>"+res['abbreviation']+"</td>"+"<td>"+new Date(res['expiry']).toLocaleString("en-CA", options).replace(" at",",")+"</td><td></td>"+"<td></tr>"
-        //console.log(res['token'])
-        //console.log("{{token|escapejs}}")
-        //console.log("{{tokens|escapejs}}")
-        }
-    }) 
-  
-  }); 
-</script>
+
 </div>
 
 {%endblock content%}

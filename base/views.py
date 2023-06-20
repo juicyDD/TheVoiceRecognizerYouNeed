@@ -152,8 +152,20 @@ def apiTokenList(request):
         # _ = UserToken.objects.filter(token_key=instance.token_key).first()
         tokenlist_json = serializers.serialize('json', tokens)
         return JsonResponse({'token':str(token),
+                             'token_key': str(instance.token_key),
                              'token_name':apiname,
                              'abbreviation':abb,
                              'expiry':expiry,
                              'tokens':tokenlist_json})
     return render(request,'base/api_token_list.html', context)
+
+@login_required(login_url='login')
+def deleteToken(request):
+    if request.method == 'POST':
+        token_key = request.POST.get('token_key')
+        token = AuthToken.objects.get(token_key=token_key)
+        if request.user !=token.user:
+            return JsonResponse({'deleteMessage':'You are not allowed to delete this token'})
+        token.delete()
+        UserToken.objects.get(token_key=token_key).delete()
+    return JsonResponse({'deleteMessage':'Token was successfully deleted'})
