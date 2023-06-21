@@ -58,6 +58,10 @@ def getSpeakerEmbedding(request):
     audio_file = request.FILES["file"]
     
     model_name = request.POST["model_name"]
+    if model_name not in nhi_config.MODEL_DICT:
+        return Response({
+            "message":"Invalid model name"
+        })
     features = features_extraction.extract_mfcc(audio_file)
     encoder = my_neural_network_new.get_speaker_encoder(model_name)
     embedding = inference.my_inference(features, encoder)
@@ -73,6 +77,10 @@ def getSimilarityOfVoices(request):
     file_2 = request.FILES["file_2"]
     
     model_name = request.POST["model_name"]
+    if model_name not in nhi_config.MODEL_DICT:
+        return Response({
+            "message":"Invalid model name"
+        })
     encoder = my_neural_network_new.get_speaker_encoder(model_name)
     
     features_1 = features_extraction.extract_mfcc(file_1)

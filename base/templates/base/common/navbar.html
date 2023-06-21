@@ -23,8 +23,8 @@
             <!--//docs-logo-wrapper-->
             <div class="docs-top-utilities d-flex justify-content-end align-items-center">
                 <div class="top-search-box d-none d-lg-flex">
-                    <form class="search-form">
-                        <input type="text" placeholder="Search the docs..." name="search" class="form-control search-input">
+                    <form class="search-form" action="{%url 'home'%}" method="GET">
+                        <input type="text" placeholder="Search the docs..." name="search" class="form-control search-input" value="{{search}}">
                         <button type="submit" class="btn search-btn" value="Search"><i class="fas fa-search"></i></button>
                     </form>
                 </div>  

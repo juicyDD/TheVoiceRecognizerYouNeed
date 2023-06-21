@@ -1,0 +1,24 @@
+{%extends 'base/common/main.html'%} {%block content%}
+<div class="container">
+    <article class="docs-article">
+        <header class="docs-header">
+            <section class="docs-intro">
+                <!-- <p><a target=”_blank” href="{%url 'document' 'speaker-recognition-development&overview'%}">Overview</a> | 
+                    <a target=”_blank” href="{%url 'document' 'speaker-recognition-development&brief-history-of-voice-recognition'%}">Brief history of Voice Recognition</a> | 
+                    <a target="_blank" href="{%url 'document' 'speaker-recognition-development&classification-of-speaker-recognition'%}">Classification of Speaker Recognition</a>
+                </p> -->
+                {%for p in posts%}
+                <p>
+                    <h4>{{p.title}}</h4>
+                    <a href="{%url 'document' p.slug %}">Read more ></a>
+                    <hr>
+                </p>
+                {%endfor%}
+            </section> 
+        </header>
+  
+
+
+
+</div>
+{%endblock content%}
