@@ -21,13 +21,216 @@
     
         </nav><!--//docs-nav-->
     </div><!--//docs-sidebar-->
-    <div class="container">
-       
+    <div class="docs-content">
+        <div class="container"> 
+        <article class="docs-article">
+            <h2>My API Tokens</h2>
+            <p style="text-align:justify">
+              Your secret API keys are listed below. Please note that we do not display your secret API keys again after you generate them.
+Do not share your API key with others, or expose it in the browser or other client-side code. In order to protect the security of your account.
+            </p>
+            <hr>
+            <table class="table">
+                <thead>
+                    <td><b>NAME</b></td>
+                    <td><b>KEY</b></td>
+                    <td><b>EXP</b></td>
+                    <td></td>
+                </thead>
+                <tbody id="tableBody">
+                {% load tz %}{% timezone 'Asia/Bangkok' %}
+                {%for token in tokens %}
+                <tr id="row{{token.token_key}}">
+                    <td>{{token.name}}</td>
+                    <td>{{token.abbreviation}}</td>
+                    <td>{{token.expiry}}</td>
+                    <td><a href="#" onclick="deleteAPIKey( '{{token.token_key}}' )" id="{{token.token_key}}"  style="color:black"><i class="fa fa-trash"></i></a></td>
+                </tr>
+                {%endfor%}{% endtimezone %}
+                </tbody>
+            </table>
+              <!-- verify delete -->
+                        <!-- Modal -->
+              <div class="modal fade" id="verifyDelete" tabindex="-1" role="dialog" aria-labelledby="verifyDeleteLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="verifyDeleteLabel">Revoke secret key</h5>
+                      <button type="button" class="btn  btn-outline-dark rounded-pill close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" style="text-align:justify;">
+                      This API key will immediately be disabled. API requests made using this key will be rejected, which could cause any systems still depending on it to break. Once revoked, you'll no longer be able to view or modify this API key.
+                      
+                      <div class="form-group ">
+                        <input hidden=true type="text" name="deletingItem" id="deletingItem" class="form-control search-input " value=""/>
+                      </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                      <button type="button" data-target="#verifyDelete" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Confirm delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+             <!-- end  verify delete -->
+
+
+            <button class="btn btn-outline-success rounded-pill  my-4 mb-2" data-toggle="modal" data-target="#newAPIKey"><i class="fa fa-plus"></i> Create new secret key</button>
+            <div class="modal fade" id="newAPIKey" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title" id="exampleModalLabel">Create new secret key</h4>
+                      <button type="button" class="btn btn-outline-dark rounded-pill close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <form  style="padding: 0px 10px" id="APIForm" action="" method="POST">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="name"><b>Name </b> <small> &nbsp; Optional</small></label>
+                            <input id="APIName" class="form-control search-input" name="name" placeholder="My API Key" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        
+                        <button type="button" class="btn btn-secondary rounded-pill  my-4 mb-2" data-dismiss="modal">Cancel</button>
+                        <button type="submit"  data-toggle="modal" data-target="#newAPIKey" class="btn btn-primary rounded-pill  my-4 mb-2">Create secret key</button>
+                    </div>
+                </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal fade" id="inforNewKey" tabindex="-1" role="dialog" aria-labelledby="createdKeyLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+
+                        <h4 class="modal-title" id="createdKeyLabel">Created successfully</h4>
+                        
+                      </div>
+                      <div class="modal-body">
+                        <p class="p-2"style="text-align:justify;">
+                            Please save this secret key somewhere safe and accessible. For security reasons, <b>you won't be able to view it again</b> through your account. If you lose this secret key, you'll need to generate a new one.
+                        </p>
+                        <form class="form-inline">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control search-input" id="returnedToken" />
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                    onclick="copyToClipboard()"><i class="fa-solid fa-copy"></i></button>
+                                  </div>
+                            </div>
+                        </form>
+                      <div class="modal-footer">
+                          
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            
+
+          
+            
+            
+        </article>
+        
     </div>
   </div>
+</div>
     
           
-    <!--//docs-article-->
+<!--//docs-article-->
+<script src="https://code.jquery.com/jquery-3.5.1.js" 
+integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" 
+    crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+  $(document).on('submit','#APIForm',function(e){
+    e.preventDefault();
+      $.ajax({
+      type:'POST',
+      url:'{% url "api-tokens" %}',
+      data:
+      {
+          name:$("#APIName").val(),
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+      },
+      success:function(res, status){
+          $("#inforNewKey").modal('show');
+          $("#returnedToken").val(res['token'])
+          tableCurrentHtml = document.getElementById("tableBody").innerHTML;
+          var options = {
+              dateStyle:'long',
+              timeStyle:'short'
+              }
+          document.getElementById("tableBody").innerHTML = tableCurrentHtml+"<tr id='row"+res['token_key']+"'><td>"+res['token_name']+"<td>"+res['abbreviation']+"</td>"+"<td>"+
+                new Date(res['expiry']).toLocaleString("en-CA", options).replace(" at",",")+"</td><td>"+
+                  "<a href=# id="+res['token_key']+" style='color:black'><i class='fa fa-trash'></i></a>"+"</td>"+"</tr>"
+          document.getElementById('row'+res['token_key']).addEventListener("click", handleDeleteAPIKey);
+          }
+      }) 
+    }); 
+
+    $('#verifyDelete .btn-danger').click(function(){
+      var tokenkey = $("#verifyDelete #deletingItem").val().replace('row','')
+      console.log('tokennnn' , tokenkey)
+      $.ajax({
+        type:'POST',
+        url: '{% url "delete-token"%}',
+        data: {token_key: tokenkey,
+        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()},
+        success:function(res, status){
+            console.log(res['deleteMessage'])
+        }
+      })
+    
+      document.getElementById('row'+tokenkey).remove();
+  });
+  
+  </script>
+<script>
+    function copyToClipboard() {
+        // Get the text field
+        var copyText = document.getElementById("returnedToken").value;
+      
+        
+         // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText);
+       console.log(copyText);
+        // Alert the copied text
+    }
+
+    function deleteAPIKey( apiKey){
+      console.log('deleting'+apiKey);
+      $("#verifyDelete #deletingItem").val(apiKey)
+      $("#verifyDelete").modal('show')
+      
+      /*$.ajax({
+        type:'POST',
+        url: '{% url "delete-token"%}',
+        data: {token_key: apiKey,
+        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()},
+        success:function(res, status){
+            console.log(res['deleteMessage'])
+        }
+      })*/
+    
+    }
+    function handleDeleteAPIKey(event)
+    {
+      deleteAPIKey(this.id);
+      
+    }
+</script>
+
 
 </div>
+
 {%endblock content%}

@@ -1,6 +1,7 @@
 import os
 import torch
 import torch.nn as nn 
+from torch.nn import functional as F
 #GeForce MX250 => Compute capability = 6.1 => CUDA ver 8.0 => downgrade python xuống 3.6 nhaa
 #virtualenv --python="C:/Users/DELL/AppData/Local/Programs/Python/Python36/python.exe" "C:/Users/DELL/Desktop/DATN/currentcode/virtualenv/"
 # pip install "C:\Users\DELL\Desktop\DATN\currentcode\torch-0.4.0-cp36-cp36m-win_amd64.whl"
@@ -68,7 +69,41 @@ class TransformerSpeakerEncoder(PretrainedEncoder):
         output = self.decoder(tgt, encoder_output)
         return output[:, 0, :]
 
+class Lisa(PretrainedEncoder):
+    def __init__(self, saved_model=""):
+        super(Lisa, self).__init__()
+        # Define the LSTM network.
+        #--------------------input_size, hidden_size, num_layers
+        self.lstm1 = nn.LSTM( input_size=nhi_config.N_MFCC, hidden_size=nhi_config.LSTM_HIDDEN_SIZE, num_layers=nhi_config.LSTM_NUM_LAYERS, batch_first=True, bidirectional=nhi_config.BI_LSTM)
+        self.lstm2= nn.LSTM( input_size=nhi_config.LSTM_HIDDEN_SIZE * 2, hidden_size=nhi_config.LSTM_HIDDEN_SIZE, num_layers=nhi_config.LSTM_NUM_LAYERS, batch_first=True, bidirectional=nhi_config.BI_LSTM)
 
+        self.linear1 = nn.Linear(128, 128)
+        self.linear2 = nn.Linear(128, 128) 
+        #--------- if there is a pretrained model, load it
+        if saved_model:
+            self.load_pretrained(saved_model)
+
+    '''join output frames'''
+    def join_frames(self, batch_output):
+        if nhi_config.FRAME_AGGREGATION_MEAN:
+            return torch.mean(
+                batch_output, dim=1, keepdim=False)
+        else:
+            return batch_output[:, -1, :]
+    def forward(self, x):
+        D = 2 if nhi_config.BI_LSTM else 1
+        #-----------h0: hidden state; c0: cell state
+        #x shape = (batch_size 8x3, seq_len, input_size)
+        h0 = torch.zeros(D * nhi_config.LSTM_NUM_LAYERS, x.shape[0], nhi_config.LSTM_HIDDEN_SIZE)
+        c0 = torch.zeros(D * nhi_config.LSTM_NUM_LAYERS, x.shape[0], nhi_config.LSTM_HIDDEN_SIZE)
+        y1, (hn, cn) = self.lstm1(x.to(nhi_config.DEVICE), (h0.to(nhi_config.DEVICE), c0.to(nhi_config.DEVICE)))
+        y2, _ = self.lstm2(y1)
+        h_conc_linear1  = F.relu(self.linear1(y1))
+        h_conc_linear2  = F.relu(self.linear2(y2))
+        y =  y1 + y2 + h_conc_linear1 + h_conc_linear2
+        # y = self.linear(y)
+        return self.join_frames(y)
+        
 
 
 def get_speaker_encoder(saved_model=""): #function to get encoder(model)

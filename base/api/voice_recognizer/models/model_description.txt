@@ -1,0 +1,145 @@
+===========================================================
+lstm-1-jennie
+===========================================================
+self.lstm = nn.LSTM(input_size = 40, 
+                    hidden_size = 64, 
+                    num_layers = 3, 
+                    batch_first=True, 
+                    bidirectional=True)
+
+Output size : [128 x 1]
+Step: 100,000th
+Equal Error Rate (EER): 0.07095
+EER Threshold: 0.577
+===========================================================
+
+
+
+
+
+===========================================================
+lstm-2-jisoo
+===========================================================
+self.lstm = nn.LSTM(input_size = 40, 
+                    hidden_size = 64, 
+                    num_layers = 3, 
+                    batch_first=True, 
+                    bidirectional=True)
+
+Output size: [128 x 1]
+Step: 50,000th
+Equal Error Rate (EER): 0.08115
+EER Threshold: 0.666
+===========================================================
+
+
+
+
+
+===========================================================
+lstm-3-lisa
+===========================================================
+self.lstm1 = nn.LSTM(input_size = 40, 
+                    hidden_size = 64, 
+                    num_layers = 3, 
+                    batch_first = True, 
+                    bidirectional = True)
+self.lstm2= nn.LSTM(input_size = 64 * 2, 
+                    hidden_size = 64, 
+                    num_layers = 3, 
+                    batch_first = True, 
+                    bidirectional = True)
+
+self.linear1 = nn.Linear(128, 128)
+self.linear2 = nn.Linear(128, 128)
+
+
+Output size: [128 x 1]
+Step: 100,000th
+Equal Error Rate (EER): 0.0839
+EER Threshold: 0.59
+===========================================================
+
+
+
+
+===========================================================
+lstm-4-rose
+===========================================================
+self.lstm1 = nn.LSTM(input_size = 40, 
+                    hidden_size = 64, 
+                    num_layers = 3, 
+                    batch_first = True, 
+                    bidirectional = True)
+self.lstm2= nn.LSTM(input_size = 64 * 2, 
+                    hidden_size = 64, 
+                    num_layers = 3, 
+                    batch_first = True, 
+                    bidirectional = True)
+
+
+Output size: [128 x 1]
+Step: 100,000th
+Equal Error Rate (EER): 0.0836
+EER Threshold: 0.608
+        
+===========================================================
+
+
+
+
+
+===========================================================
+transformer-1-momo
+===========================================================
+super(TransformerSpeakerEncoder, self).__init__()
+
+self.linear_layer = nn.Linear(40, 32)
+
+self.encoder = nn.TransformerEncoder(
+    nn.TransformerEncoderLayer(d_model = 32, 
+                              nhead = 8, 
+                              batch_first = True), num_layers = 2)
+
+self.decoder = nn.TransformerDecoder(
+    nn.TransformerDecoderLayer(d_model = 32, 
+                              nhead = 8, 
+                              batch_first = True), num_layers = 1)
+
+Output size : [32 x 1]
+Step: 100,000th
+Equal Error Rate (EER): 0.1008
+EER Threshold: 0.79
+===========================================================
+
+
+
+
+
+===========================================================
+transformer-2-tzuyu
+===========================================================
+super(TransformerSpeakerEncoder, self).__init__()
+
+self.linear_layer = nn.Linear(40, 32)
+
+self.encoder = nn.TransformerEncoder(
+    nn.TransformerEncoderLayer(d_model = 32, 
+                              nhead = 8, 
+                              batch_first = True), num_layers = 2)
+
+self.decoder = nn.TransformerDecoder(
+    nn.TransformerDecoderLayer(d_model = 32, 
+                              nhead = 8, 
+                              batch_first = True), num_layers = 1)
+
+Output size : [32 x 1]
+Step: 200,000th
+Equal Error Rate (EER): 0.0957
+EER Threshold: 0.698
+===========================================================
+
+
+
+
+

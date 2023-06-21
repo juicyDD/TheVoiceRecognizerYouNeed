@@ -5,9 +5,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
-from django.http import HttpResponse
-from .models import Post
+from django.http import HttpResponse, JsonResponse
+from .models import Post, UserToken 
 from .forms import SignUpForm
+from knox.models import AuthToken 
+from django.core import serializers
+import json
 
 def loginPage(request):
     if request.user.is_authenticated:
@@ -100,7 +103,6 @@ def document(request,slug):
 
 @login_required(login_url='login')
 def editUser(request):
-    context = {}
     context = {'username':request.user.username,
                'first_name': request.user.first_name,
                'last_name': request.user.last_name,
@@ -125,9 +127,46 @@ def editUser(request):
 
 @login_required(login_url='login')
 def apiPage(request):
-    context = {}
+    posts = Post.objects.filter(topic="API Guidelines").order_by('summary')
+    context = {"related_posts":posts}
     return render(request,'base/api_list.html',context)
 
+@login_required(login_url='login')
 def apiTokenList(request):
-    context = {}
+    tokens = UserToken.objects.filter(email=request.user.email)
+    context = {'tokens': tokens,'token':None}
+    if request.method == 'POST':
+        apiname = request.POST.get('name')
+        print(apiname)
+        instance, token=AuthToken.objects.create(request.user)
+            
+        abb = token[:4] +"..." + token[-4:]
+        expiry = instance.expiry
+        context['token']=str(token)
+        UserToken.objects.create(
+            name = apiname,
+            token_key = instance.token_key,
+            email = request.user.email,
+            abbreviation = abb,
+            expiry =expiry
+        )
+        # _ = UserToken.objects.filter(token_key=instance.token_key).first()
+        tokenlist_json = serializers.serialize('json', tokens)
+        return JsonResponse({'token':str(token),
+                             'token_key': str(instance.token_key),
+                             'token_name':apiname,
+                             'abbreviation':abb,
+                             'expiry':expiry,
+                             'tokens':tokenlist_json})
     return render(request,'base/api_token_list.html', context)
+
+@login_required(login_url='login')
+def deleteToken(request):
+    if request.method == 'POST':
+        token_key = request.POST.get('token_key')
+        token = AuthToken.objects.get(token_key=token_key)
+        if request.user !=token.user:
+            return JsonResponse({'deleteMessage':'You are not allowed to delete this token'})
+        token.delete()
+        UserToken.objects.get(token_key=token_key).delete()
+    return JsonResponse({'deleteMessage':'Token was successfully deleted'})

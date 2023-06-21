@@ -22,3 +22,12 @@ class Post(models.Model):
         if self.slug is None:
             self.slug = slugify(self.topic)+"&"+slugify(self.title)
         return super().save(*args, **kwargs)
+    
+class UserToken(models.Model):
+    token_key = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(verbose_name='Name', max_length=255, null=True, blank=True)
+    email = models.EmailField(verbose_name='Email',null=True,blank=True)
+    # token = models.CharField(max_length=255,null=True,blank=True)
+    abbreviation = models.CharField(max_length=255,null=True,blank=True)
+    expiry = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField( auto_now_add = True)

@@ -41,7 +41,6 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         username = attrs.get('username').lower()
         password = attrs.get('password')
-        print("hehe",username,password)
         if not username or not password:
             raise serializers.ValidationError("Please give both username and password.")
 
