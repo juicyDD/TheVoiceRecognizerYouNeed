@@ -9,14 +9,13 @@ from base.api.voice_recognizer import nhi_config
 
 class PretrainedEncoder(nn.Module):
     def load_pretrained(self, saved_model):
-        my_state_dict = torch.load(saved_model, map_location=nhi_config.DEVICE) #, map_location=nhi_config.DEVICE
+        my_state_dict = torch.load(saved_model, map_location=nhi_config.DEVICE) 
         self.load_state_dict(my_state_dict["encoder_state_dict"])
       
-#LONG SHORT-TERM MEMORY MODEL
-class LstmSpeakerEncoder(PretrainedEncoder):
+'''LONG SHORT-TERM MEMORY MODEL'''
+class JennieJisoo(PretrainedEncoder):
     def __init__(self, saved_model=""):
-        super(LstmSpeakerEncoder, self).__init__()
-        # Define the LSTM network.
+        super(JennieJisoo, self).__init__()
         self.lstm = nn.LSTM(
             input_size=nhi_config.N_MFCC,
             hidden_size=nhi_config.LSTM_HIDDEN_SIZE,
@@ -42,14 +41,13 @@ class LstmSpeakerEncoder(PretrainedEncoder):
         c0 = torch.zeros(D * nhi_config.LSTM_NUM_LAYERS, x.shape[0], nhi_config.LSTM_HIDDEN_SIZE)
         y, (hn, cn) = self.lstm(x.to(nhi_config.DEVICE), (h0.to(nhi_config.DEVICE), c0.to(nhi_config.DEVICE)))
         return self.join_frames(y)
-        
-class TransformerSpeakerEncoder(PretrainedEncoder):
-    
+
+'''TRANSFORMER MODEL'''
+class MomoTzuyu(PretrainedEncoder):
     def __init__(self, saved_model=""):
-        super(TransformerSpeakerEncoder, self).__init__()
-        # Define the Transformer network.
+        super(MomoTzuyu, self).__init__()
         self.linear_layer = nn.Linear(nhi_config.N_MFCC, nhi_config.TRANSFORMER_DIM)
-        
+
         self.encoder = nn.TransformerEncoder(
             nn.TransformerEncoderLayer(d_model=nhi_config.TRANSFORMER_DIM, nhead=nhi_config.TRANSFORMER_HEADS, batch_first=True),
             num_layers=nhi_config.TRANSFORMER_ENCODER_LAYERS)
@@ -59,7 +57,6 @@ class TransformerSpeakerEncoder(PretrainedEncoder):
             num_layers=1)
 
         if saved_model:
-            # self._load_from(saved_model)
             self.load_pretrained(saved_model)
 
     def forward(self, x):
@@ -72,14 +69,10 @@ class TransformerSpeakerEncoder(PretrainedEncoder):
 class Lisa(PretrainedEncoder):
     def __init__(self, saved_model=""):
         super(Lisa, self).__init__()
-        # Define the LSTM network.
-        #--------------------input_size, hidden_size, num_layers
         self.lstm1 = nn.LSTM( input_size=nhi_config.N_MFCC, hidden_size=nhi_config.LSTM_HIDDEN_SIZE, num_layers=nhi_config.LSTM_NUM_LAYERS, batch_first=True, bidirectional=nhi_config.BI_LSTM)
         self.lstm2= nn.LSTM( input_size=nhi_config.LSTM_HIDDEN_SIZE * 2, hidden_size=nhi_config.LSTM_HIDDEN_SIZE, num_layers=nhi_config.LSTM_NUM_LAYERS, batch_first=True, bidirectional=nhi_config.BI_LSTM)
-
         self.linear1 = nn.Linear(128, 128)
         self.linear2 = nn.Linear(128, 128) 
-        #--------- if there is a pretrained model, load it
         if saved_model:
             self.load_pretrained(saved_model)
 
@@ -92,8 +85,6 @@ class Lisa(PretrainedEncoder):
             return batch_output[:, -1, :]
     def forward(self, x):
         D = 2 if nhi_config.BI_LSTM else 1
-        #-----------h0: hidden state; c0: cell state
-        #x shape = (batch_size 8x3, seq_len, input_size)
         h0 = torch.zeros(D * nhi_config.LSTM_NUM_LAYERS, x.shape[0], nhi_config.LSTM_HIDDEN_SIZE)
         c0 = torch.zeros(D * nhi_config.LSTM_NUM_LAYERS, x.shape[0], nhi_config.LSTM_HIDDEN_SIZE)
         y1, (hn, cn) = self.lstm1(x.to(nhi_config.DEVICE), (h0.to(nhi_config.DEVICE), c0.to(nhi_config.DEVICE)))
@@ -101,33 +92,16 @@ class Lisa(PretrainedEncoder):
         h_conc_linear1  = F.relu(self.linear1(y1))
         h_conc_linear2  = F.relu(self.linear2(y2))
         y =  y1 + y2 + h_conc_linear1 + h_conc_linear2
-        # y = self.linear(y)
         return self.join_frames(y)
         
 
 
-def get_speaker_encoder(saved_model=""): #function to get encoder(model)
-    if nhi_config.USE_TRANSFORMER:
-        return TransformerSpeakerEncoder(saved_model).to(nhi_config.DEVICE)
-    else:
-        return LstmSpeakerEncoder(saved_model).to(nhi_config.DEVICE)
-    
-class Singleton(type): #use singleton to get encoder(model) ONCE
-    _instances = {}
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-    
-class MyEncoder(metaclass=Singleton):
-    def __init__(self, saved_model=nhi_config.SAVED_MODEL_PATH):
-        if nhi_config.USE_TRANSFORMER == True:
-            self.encoder = TransformerSpeakerEncoder(saved_model).to(nhi_config.DEVICE)
-        else:
-            self.encoder = LstmSpeakerEncoder(saved_model).to(nhi_config.DEVICE)
-    
+def get_speaker_encoder(name="jennie"): #function to get encoder(model)
+    if name=="jennie":
+        return JennieJisoo(nhi_config.MODEL_DICT["jennie"]["path"]).to(nhi_config.DEVICE)
+    elif name=="jisoo":
+        return JennieJisoo(nhi_config.MODEL_DICT["jisoo"]["path"]).to(nhi_config.DEVICE)
 
-# if __name__ == "__main__":
-#     print(torch.cuda.is_available())
+
     
     

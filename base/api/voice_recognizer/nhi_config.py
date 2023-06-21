@@ -1,8 +1,6 @@
 import torch
 import os
 import multiprocessing
-TRAIN_DATASET_DIR = r"D:\SpeechDataset\train\train-clean-100" #train-clean-100 of LibriSpeech has 251 different speakers
-TEST_DATASET_DIR = r"D:\SpeechDataset\test\LibriSpeech\test-clean"
 
 # PRETRAINED_MODEL = r"D:\DATN\currentcode_secondenvironment\models_transformer_mfcc_100k_specaug\saved_model.ckpt-100000.pt"
 PRETRAINED_MODEL =''
@@ -83,7 +81,15 @@ TRAINING_STEPS = 100000
 # Number of processes for multi-processing.
 NUM_PROCESSES = min(multiprocessing.cpu_count(), BATCH_SIZE)
 
-# SAVED_MODEL_PATH = r"C:\Users\DELL\Desktop\DATN\currentcode_secondenvironment\models\saved_model.pt"
 
 # Save a model to disk every these many steps.
 SAVE_MODEL_FREQUENCY = 10000
+
+MODEL_DICT = {
+    "jennie":{"path":r"base\api\voice_recognizer\models\lstm-1-jennie.pt"},
+    "jisoo":{"path":r"base\api\voice_recognizer\models\lstm-2-jisoo.pt"},
+    "lisa":{"path":r"base\api\voice_recognizer\models\lstm-3-lisa.pt"},
+    "momo":{"path":r"base\api\voice_recognizer\models\transformer-1-momo.pt"},
+    "tzuyu":{"path":r"base\api\voice_recognizer\models\transformer-2-tzuyu.pt"},
+    
+}
