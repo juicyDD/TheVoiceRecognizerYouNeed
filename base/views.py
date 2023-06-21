@@ -127,7 +127,8 @@ def editUser(request):
 
 @login_required(login_url='login')
 def apiPage(request):
-    context = {}
+    posts = Post.objects.filter(topic="API Guidelines").order_by('summary')
+    context = {"posts":posts}
     return render(request,'base/api_list.html',context)
 
 @login_required(login_url='login')

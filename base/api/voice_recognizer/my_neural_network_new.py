@@ -73,6 +73,7 @@ class Lisa(PretrainedEncoder):
         self.lstm2= nn.LSTM( input_size=nhi_config.LSTM_HIDDEN_SIZE * 2, hidden_size=nhi_config.LSTM_HIDDEN_SIZE, num_layers=nhi_config.LSTM_NUM_LAYERS, batch_first=True, bidirectional=nhi_config.BI_LSTM)
         self.linear1 = nn.Linear(128, 128)
         self.linear2 = nn.Linear(128, 128) 
+        self.linear_pe = nn.Linear(128, 1)
         if saved_model:
             self.load_pretrained(saved_model)
 
@@ -94,13 +95,43 @@ class Lisa(PretrainedEncoder):
         y =  y1 + y2 + h_conc_linear1 + h_conc_linear2
         return self.join_frames(y)
         
+class Rose(PretrainedEncoder):
+    def __init__(self, saved_model=""):
+        super(Rose, self).__init__()
+        self.lstm1 = nn.LSTM( input_size=nhi_config.N_MFCC, hidden_size=nhi_config.LSTM_HIDDEN_SIZE, num_layers=nhi_config.LSTM_NUM_LAYERS, batch_first=True, bidirectional=nhi_config.BI_LSTM)
+        self.lstm2= nn.LSTM( input_size=nhi_config.LSTM_HIDDEN_SIZE * 2, hidden_size=nhi_config.LSTM_HIDDEN_SIZE, num_layers=nhi_config.LSTM_NUM_LAYERS, batch_first=True, bidirectional=nhi_config.BI_LSTM)
 
+        if saved_model:
+            self.load_pretrained(saved_model)
+
+    '''join output frames'''
+    def join_frames(self, batch_output):
+        if nhi_config.FRAME_AGGREGATION_MEAN:
+            return torch.mean(
+                batch_output, dim=1, keepdim=False)
+        else:
+            return batch_output[:, -1, :]
+    def forward(self, x):
+        D = 2 if nhi_config.BI_LSTM else 1
+        h0 = torch.zeros(D * nhi_config.LSTM_NUM_LAYERS, x.shape[0], nhi_config.LSTM_HIDDEN_SIZE)
+        c0 = torch.zeros(D * nhi_config.LSTM_NUM_LAYERS, x.shape[0], nhi_config.LSTM_HIDDEN_SIZE)
+        y1, (hn, cn) = self.lstm1(x.to(nhi_config.DEVICE), (h0.to(nhi_config.DEVICE), c0.to(nhi_config.DEVICE)))
+        y2, _ = self.lstm2(y1)
+        y = y1 + y2
+        return self.join_frames(y)
+        
 
 def get_speaker_encoder(name="jennie"): #function to get encoder(model)
     if name=="jennie":
         return JennieJisoo(nhi_config.MODEL_DICT["jennie"]["path"]).to(nhi_config.DEVICE)
     elif name=="jisoo":
         return JennieJisoo(nhi_config.MODEL_DICT["jisoo"]["path"]).to(nhi_config.DEVICE)
+    elif name=="lisa":
+        return Lisa(nhi_config.MODEL_DICT["lisa"]["path"]).to(nhi_config.DEVICE)
+    elif name=="rose":
+        return Rose(nhi_config.MODEL_DICT["rose"]["path"]).to(nhi_config.DEVICE)
+    
+    
 
 
     

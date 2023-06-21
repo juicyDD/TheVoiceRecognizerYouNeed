@@ -89,6 +89,7 @@ MODEL_DICT = {
     "jennie":{"path":r"base\api\voice_recognizer\models\lstm-1-jennie.pt"},
     "jisoo":{"path":r"base\api\voice_recognizer\models\lstm-2-jisoo.pt"},
     "lisa":{"path":r"base\api\voice_recognizer\models\lstm-3-lisa.pt"},
+    "rose":{"path":r"base\api\voice_recognizer\models\lstm-4-rose.pt"},
     "momo":{"path":r"base\api\voice_recognizer\models\transformer-1-momo.pt"},
     "tzuyu":{"path":r"base\api\voice_recognizer\models\transformer-2-tzuyu.pt"},
     
