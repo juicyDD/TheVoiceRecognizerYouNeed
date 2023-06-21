@@ -29,15 +29,25 @@ def getRoutes(request):
 
 @api_view(['GET'])
 def getModels(request):
-    models = [
-        'lstm-1-jennie',
-        'lstm-2-jisoo',
-        'lstm-3-lisa',
-        'lstm-4-rose',
-        'transformer-1-momo',
-        'transformer-2-tzuyu',
-        #'transformer-3-sana'
-    ]
+    # models = [
+    #     'jennie',
+    #     'jisoo',
+    #     'lisa',
+    #     'rose',
+    #     'momo',
+    #     'tzuyu',
+    #     #'transformer-3-sana'
+    # ]
+    models = {
+        "models":[
+        'jennie',
+        'jisoo',
+        'lisa',
+        'rose',
+        'momo',
+        'tzuyu',
+            ],
+    }
     return Response(models)
 # @api_view(["POST"])
 # # @permission_classes(IsAuthenticated)
