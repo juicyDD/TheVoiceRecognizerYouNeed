@@ -29,15 +29,6 @@ def getRoutes(request):
 
 @api_view(['GET'])
 def getModels(request):
-    # models = [
-    #     'jennie',
-    #     'jisoo',
-    #     'lisa',
-    #     'rose',
-    #     'momo',
-    #     'tzuyu',
-    #     #'transformer-3-sana'
-    # ]
     models = {
         "models":[
         'jennie',
@@ -65,6 +56,7 @@ def getModels(request):
 @permission_classes([IsAuthenticated])
 def getSpeakerEmbedding(request):
     audio_file = request.FILES["file"]
+    
     model_name = request.POST["model_name"]
     features = features_extraction.extract_mfcc(audio_file)
     encoder = my_neural_network_new.get_speaker_encoder(model_name)
@@ -74,6 +66,32 @@ def getSpeakerEmbedding(request):
     data = {"embeddings":result}
     return Response(data)
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def getSimilarityOfVoices(request):
+    file_1 = request.FILES["file_1"]
+    file_2 = request.FILES["file_2"]
+    
+    model_name = request.POST["model_name"]
+    encoder = my_neural_network_new.get_speaker_encoder(model_name)
+    
+    features_1 = features_extraction.extract_mfcc(file_1)
+    embedding_1 = inference.my_inference(features_1, encoder)
+    
+    features_2 = features_extraction.extract_mfcc(file_2)
+    embedding_2 = inference.my_inference(features_2, encoder)
+    
+    cos_similarity = features_extraction.cosine_similarity(embedding_1, embedding_2)
+    same_speaker = True if cos_similarity > nhi_config.MODEL_DICT[model_name]['eer_thres'] else False
+    print(embedding_1, embedding_2)
+    data = {
+        "embedding_1": pd.Series(embedding_1).to_json(orient = 'values'),
+        "embedding_2": pd.Series(embedding_2).to_json(orient = 'values'),
+        "cosine_similarity" : cos_similarity,
+        "same_speaker": str(same_speaker)
+    }
+    return Response(data)
+    # return Response({})
 class CreateUserAPI(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = CreateUserSerializer

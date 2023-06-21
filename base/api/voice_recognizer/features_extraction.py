@@ -1,5 +1,6 @@
 import soundfile as sf
 import librosa
+import numpy as np
 
 from base.api.voice_recognizer import nhi_config
 
@@ -36,5 +37,9 @@ def extract_sliding_windows(features):
         windows.append(_)
         start_idx += nhi_config.SLIDING_WINDOW_STEP
     return windows
+
+def cosine_similarity(x1,x2):
+    return np.dot(x1,x2)/(np.linalg.norm(x1)*np.linalg.norm(x2))
+
 
 

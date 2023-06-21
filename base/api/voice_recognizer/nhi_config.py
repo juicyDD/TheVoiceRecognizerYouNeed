@@ -86,11 +86,23 @@ NUM_PROCESSES = min(multiprocessing.cpu_count(), BATCH_SIZE)
 SAVE_MODEL_FREQUENCY = 10000
 
 MODEL_DICT = {
-    "jennie":{"path":r"base\api\voice_recognizer\models\lstm-1-jennie.pt"},
-    "jisoo":{"path":r"base\api\voice_recognizer\models\lstm-2-jisoo.pt"},
-    "lisa":{"path":r"base\api\voice_recognizer\models\lstm-3-lisa.pt"},
-    "rose":{"path":r"base\api\voice_recognizer\models\lstm-4-rose.pt"},
-    "momo":{"path":r"base\api\voice_recognizer\models\transformer-1-momo.pt"},
-    "tzuyu":{"path":r"base\api\voice_recognizer\models\transformer-2-tzuyu.pt"},
+    "jennie": {
+        "path": r"base\api\voice_recognizer\models\lstm-1-jennie.pt",
+        "eer_thres": 0.577},
+    "jisoo": {
+        "path": r"base\api\voice_recognizer\models\lstm-2-jisoo.pt",
+        "eer_thres": 0.666},
+    "lisa": {
+        "path": r"base\api\voice_recognizer\models\lstm-3-lisa.pt",
+        "eer_thres": 0.59},
+    "rose": {
+        "path": r"base\api\voice_recognizer\models\lstm-4-rose.pt",
+        "eer_thres": 0.608},
+    "momo": {
+        "path": r"base\api\voice_recognizer\models\transformer-1-momo.pt",
+        "eer_thres": 0.79},
+    "tzuyu": {
+        "path":r"base\api\voice_recognizer\models\transformer-2-tzuyu.pt",
+        "eer_thres": 0.698},
     
 }

@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
-from .models import Post, UserToken
+from .models import Post, UserToken 
 from .forms import SignUpForm
 from knox.models import AuthToken 
 from django.core import serializers
