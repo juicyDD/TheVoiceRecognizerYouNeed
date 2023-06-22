@@ -12,6 +12,11 @@ from knox.models import AuthToken
 from django.core import serializers
 import json
 
+from django.db.models import CharField
+from django.db.models.functions import Lower
+
+CharField.register_lookup(Lower)
+
 def loginPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -88,6 +93,13 @@ def registerUser(request):
                 
     return render(request, "base/register.html",context)
 def home(request):
+    search = request.GET.get('search') if request.GET.get('search') != None else None
+    if search is not None:
+        posts = Post.objects.filter(title__lower__icontains=search)
+        context = {"posts":posts,
+                   "search":search}
+        print(posts)
+        return render(request, 'base/doc_search.html',context)
     # posts = Post.objects.all()
     # context = {"posts":posts}
     return render(request,'base/homepage.html')
@@ -100,6 +112,12 @@ def document(request,slug):
     related_posts = Post.objects.filter(topic=post.topic)
     context = {'post':post,'related_posts':related_posts}
     return render(request,'base/document.html',context)
+
+# def search(request,search):
+#     posts = Post.objects.filter(title__unaccent__lower__icontains=search)
+#     context = {"posts":posts}
+#     print(posts)
+#     return render(request, 'base/doc_search.html',context)
 
 @login_required(login_url='login')
 def editUser(request):

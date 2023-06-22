@@ -9,7 +9,7 @@ urlpatterns = [
     path('settings',views.editUser, name='edit-user'),
     path('documentation/<str:slug>/',views.document,name='document'),
     path('documentation',views.tableofcontent,name='table-content'),
-    path('api-list',views.apiPage,name='api'),
+    path('api-guidelines',views.apiPage,name='api'),
     path('api-tokens',views.apiTokenList,name='api-tokens'),
     path('delete-token', views.deleteToken,name='delete-token'),
     path('api/',include('base.api.urls'))
