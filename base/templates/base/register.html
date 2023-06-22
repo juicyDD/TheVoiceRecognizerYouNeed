@@ -9,10 +9,11 @@
             </h3>
             <form class="search-form" method="POST">
                 {%csrf_token%} {%if messages%} {%for msg in messages%}
+                
                 {%if 'successfully' in msg.message%}
                 <span class="text-success" style="margin-left: 20px; font-size: 14px;">{{msg.message}}</span> 
                 {%else %}
-                <span class="text-danger" style="padding-left: 20px; font-size: 14px;">{{msg.message}}</span> {%endif%} {%endfor%} {%endif%} {% for field in form %}
+                <div class="text-danger" style="padding-left: 15px; padding-right:15px; font-size: 14px; text-align:justify">{{msg.message}}</div> {%endif%} {%endfor%} {%endif%} {% for field in form %}
                 <div class="form-group">{{field}}<br></div>
                 {%endfor%}
                 

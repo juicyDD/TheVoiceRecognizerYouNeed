@@ -60,7 +60,7 @@
                         <li class="list-inline-item" style="margin-top: 7px;"><a href="http://github.com/juicydd"><i class="fab fa-github fa-fw"></i></a></li>
                        
                         {%if request.user.is_authenticated%}
-                        <li class="list-inline-item">
+                        <li class="list-inline-item" style="margin-top: 7px;">
                             <a class="" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa-solid fa-user fa-fw"></i>
                             </a>
@@ -75,13 +75,13 @@
                                 
                             </div>
                         </li>
-                        <li class="list-inline-item">
+                        
                             {%else%}
                         <a href="{%url 'login'%}?next={%url 'home'%}" class="btn btn-outline-success d-none d-lg-flex ">Sign In</a> 
                                 
                                 {%endif%}
                         </li>
-                        </ul>
+                        
                         
                 <!--//docs-top-utilities-->
             </div>

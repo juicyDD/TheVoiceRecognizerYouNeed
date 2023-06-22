@@ -11,13 +11,14 @@ from .forms import SignUpForm
 from knox.models import AuthToken 
 from django.core import serializers
 import json
-
+import re
 from django.db.models import CharField
 from django.db.models.functions import Lower
 
 CharField.register_lookup(Lower)
 
 def loginPage(request):
+    email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
     if request.user.is_authenticated:
         return redirect('home')
     context = {}
@@ -26,11 +27,23 @@ def loginPage(request):
         context["username"]=username
         password = request.POST.get('password')
         next = request.GET.get('next')
-        try:
-            user = User.objects.get(username=username)
-        except:
-            messages.error(request,'User does not exist')
-        user = authenticate(request, username=username, password=password)
+        user = None
+        username_ = None
+        if(re.fullmatch(email_regex, username)):
+
+            try:
+                user = User.objects.get(email=username)
+            except:
+                messages.error(request,'User does not exist')
+            if user is not None:
+                username_ = user.username if user is not None else None
+            user = authenticate(request, username=username_, password=password)
+        else:
+            try:
+                user = User.objects.get(username=username)
+            except:
+                messages.error(request,'User does not exist')
+            user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             if next:
